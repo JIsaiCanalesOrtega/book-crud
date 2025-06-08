@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 
 class Book(BaseModel):
@@ -50,3 +50,7 @@ class UserPublic(BaseModel):
     email: str
     profile_image: Optional[str] = None
 
+class UserUpdateModel(BaseModel):
+    username: Optional[str]
+    email: Optional[EmailStr]
+    profile_image: Optional[str]

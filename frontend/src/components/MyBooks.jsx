@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
+import EditBookForm from "./EditBookForm";
+
 
 const API_BASE = import.meta.env.PUBLIC_API_URL || "http://localhost:8000";
 
 function MyBooks() {
+  const [editingBook, setEditingBook] = useState(null);
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,26 +49,41 @@ function MyBooks() {
     }
   }, [token]);
 
-  const handleDelete = async (bookId) => {
-    const confirm = window.confirm("¿Estás seguro de que deseas eliminar este libro?");
-    if (!confirm) return;
+// ...todo tu código anterior
+const handleEdit = async (book) => {
+  const newTitle = prompt("Nuevo título:", book.title);
+  if (newTitle === null || newTitle.trim() === "") return;
 
-    try {
-      const res = await fetch(`${API_BASE}/books/${bookId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  const newDescription = prompt("Nueva descripción:", book.description);
+  if (newDescription === null) return;
 
-      if (!res.ok) throw new Error("Error al eliminar el libro");
+  try {
+    const res = await fetch(`${API_BASE}/books/${book._id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: newTitle,
+        description: newDescription,
+        image: book.image, // puedes dejarlo editable más adelante
+      }),
+    });
 
-      setBooks(prev => prev.filter(book => book._id !== bookId));
-    } catch (err) {
-      console.error("Error eliminando libro:", err);
-      alert("No se pudo eliminar el libro.");
-    }
-  };
+    if (!res.ok) throw new Error("Error al actualizar el libro");
+
+    const updatedBook = await res.json();
+
+    setBooks(prev =>
+      prev.map(b => (b._id === book._id ? updatedBook : b))
+    );
+  } catch (err) {
+    console.error("Error actualizando libro:", err);
+    alert("No se pudo actualizar el libro.");
+  }
+};
+
 
   if (loading) return <p className="text-center">Cargando tus libros...</p>;
   if (!token) return <p className="text-center text-red-500">Debes iniciar sesión.</p>;
@@ -87,6 +105,18 @@ function MyBooks() {
             />
           )}
 
+          {editingBook && (
+            <EditBookForm
+              book={editingBook}
+              onClose={() => setEditingBook(null)}
+              onUpdate={(updatedBook) =>
+                setBooks((prev) =>
+                  prev.map((b) => (b._id === updatedBook._id ? updatedBook : b))
+                )
+              }
+            />
+          )}
+
           <div className="mt-4 flex justify-between items-center">
             <a
               href={`${API_BASE}/${book.file_path}`}
@@ -95,6 +125,14 @@ function MyBooks() {
             >
               📄 Ver PDF
             </a>
+
+            <button
+              onClick={() => setEditingBook(book)}
+              className="text-yellow-600 hover:text-yellow-800 text-sm font-medium mr-3"
+            >
+              ✏️ Editar
+            </button>
+
             <button
               onClick={() => handleDelete(book._id)}
               className="text-red-600 hover:text-red-800 text-sm font-medium"
