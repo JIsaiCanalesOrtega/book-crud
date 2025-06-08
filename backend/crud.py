@@ -59,5 +59,12 @@ def insert_user(data: dict):
 def get_user_by_username(username: str):
     return user_collection.find_one({"username": username})
 
+from bson import ObjectId
+
 def update_user(id: str, data: dict):
-    user_collection
+    result = user_collection.update_one(
+        {"_id": ObjectId(id)},
+        {"$set": data}
+    )
+    return result.modified_count
+

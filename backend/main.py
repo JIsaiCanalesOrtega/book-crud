@@ -4,9 +4,18 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
 from bson import ObjectId
+from fastapi import Body
 
 from . import crud, utils
-from .models import Book, Author, Category, UserPublic, UserCreate, UserLogin
+from .models import (
+    Book,
+    Author,
+    Category,
+    UserPublic,
+    UserCreate,
+    UserLogin,
+    UserUpdateModel  # Asegúrate de tener este modelo en models.py
+)
 from .utils import get_current_user
 
 app = FastAPI()
@@ -97,21 +106,22 @@ def list_categories():
     return crud.get_all_categories()
 
 
+# Obtener perfil del usuario actual
 @app.get("/me", response_model=UserPublic)
 def get_me(user=Depends(get_current_user)):
     user["_id"] = str(user["_id"])
     return user
 
-@app.get("/me", response_model=UserPublic)
-def update_me(updated: UserCreate, user=Depends(get_current_user)):
-    if updated.username != user["username"]:
+# Actualizar perfil del usuario actual
+@app.put("/me", response_model=UserPublic)
+def update_me(updated: UserUpdateModel, user=Depends(get_current_user)):
+    if updated.username and updated.username != user["username"]:
         if crud.get_user_by_username(updated.username):
-            raise HTTPException(status_code=400, detail="Username already registered")
-    updated_data = {
-        "username": updated.username,
-        "profile_image": updated.profile_image,   
-    }
+            raise HTTPException(status_code=400, detail="Nombre de usuario ya en uso")
+
+    updated_data = {k: v for k, v in updated.dict().items() if v is not None}
     crud.update_user(user["_id"], updated_data)
+
     user.update(updated_data)
     user["_id"] = str(user["_id"])
     return user
@@ -156,3 +166,39 @@ def get_user(user_id: str):
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     user["_id"] = str(user["_id"])
     return user
+
+@app.put("/books/{book_id}")
+async def update_book(
+    book_id: str,
+    title: str = Form(...),
+    description: str = Form(""),
+    image: str = Form(""),
+    file: UploadFile = None,
+    user=Depends(get_current_user)
+):
+    from .database import book_collection
+    from bson import ObjectId
+
+    book = book_collection.find_one({"_id": ObjectId(book_id)})
+    if not book:
+        raise HTTPException(status_code=404, detail="Libro no encontrado")
+    if str(book["user_id"]) != str(user["_id"]):
+        raise HTTPException(status_code=403, detail="No autorizado")
+
+    update_data = {
+        "title": title,
+        "description": description,
+        "image": image
+    }
+
+    if file:
+        import os
+        from . import utils
+        if os.path.exists(book["file_path"]):
+            os.remove(book["file_path"])
+        update_data["file_path"] = utils.save_pdf(file)
+
+    book_collection.update_one({"_id": ObjectId(book_id)}, {"$set": update_data})
+    book.update(update_data)
+    book["_id"] = str(book["_id"])
+    return book
