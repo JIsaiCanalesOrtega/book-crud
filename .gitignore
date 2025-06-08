@@ -1,0 +1,48 @@
+# ⚙️ Node / React / Astro
+node_modules/
+dist/
+build/
+.vite/
+.next/
+out/
+.DS_Store
+
+# ⚙️ Astro
+.cache/
+*.astro-types/
+
+# ⚙️ Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ⚙️ VSCode
+.vscode/
+
+# ⚙️ Env variables
+.env
+.env.*
+
+# ⚙️ Python / FastAPI
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.log
+venv/
+env/
+.mypy_cache/
+.pytest_cache/
+
+# ⚙️ OS / extras
+Thumbs.db
+.DS_Store
+.idea/
+*.swp
+
+# ⚙️ Git
+*.orig
