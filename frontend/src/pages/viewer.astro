@@ -1,0 +1,15 @@
+---
+import PDFViewer from "../components/PDFViewer.jsx";
+import "../styles/global.css";
+---
+
+<html lang="es">
+  <head>
+    <title>Visor de PDF</title>
+  </head>
+  <body class="min-h-screen bg-[url('/background.jpeg')] bg-cover bg-center text-gray-900 backdrop-blur-sm p-6">
+    <div class="max-w-5xl mx-auto">
+      <PDFViewer client:only="react" />
+    </div>
+  </body>
+</html>

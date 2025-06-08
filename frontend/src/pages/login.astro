@@ -1,0 +1,19 @@
+---
+import LoginForm from "../components/LoginForm.jsx";
+import "../styles/global.css";
+---
+
+<html lang="es">
+  <head>
+    <title>Ourlumina</title>
+  </head>
+  <body class="min-h-screen bg-[url('/background.jpeg')] bg-cover bg-center flex items-center justify-center text-gray-900 backdrop-blur">
+    <div class="bg-white rounded-2xl shadow-lg p-10 w-full max-w-md">
+      <div class="flex flex-col items-center mb-6">
+        <img class="h-10 w-10 mb-2" src="/closebook.png" alt="Icono libro cerrado" />
+        <h1 class="text-2xl font-serif font-semibold">Bienvenido a Ourlumina</h1>
+      </div>
+      <LoginForm client:load />
+    </div>
+  </body>
+</html>

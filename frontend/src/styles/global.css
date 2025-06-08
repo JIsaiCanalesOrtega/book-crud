@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+.btn {
+  @apply bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+/* Scrollbar estilizada */
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0.4rem;
+}
+
+.scrollbar-hide::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-hide::-webkit-scrollbar-thumb {
+  background-color: rgba(172, 132, 60, 0.6); /* Ámbar semi */
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.scrollbar-hide {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(172, 132, 60, 0.6) transparent;
+}
