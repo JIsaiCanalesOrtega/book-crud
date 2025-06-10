@@ -21,7 +21,7 @@ function RegisterForm() {
       }
 
       const data = await res.json();
-      setMsg("✅ Usuario creado con éxito");
+      setMsg("✅ Usuario creado con éxitoo");
       setForm({ username: "", email: "", password: "" });
     } catch (err) {
       setMsg("❌ " + err.message);
