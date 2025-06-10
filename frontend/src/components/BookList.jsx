@@ -79,9 +79,8 @@ function BookList() {
 
             {book.file_path && (
               <a
-                href={`/viewer?file=${encodeURIComponent(
-                  `${API_BASE}/${book.file_path}`
-                )}`}
+                href={`${API_BASE}/${book.file_path}`}  // Direct URL to the PDF
+                target="_blank"  // Open in a new tab
                 className="text-blue-600 underline text-sm hover:text-blue-800 transition-colors"
               >
                 Ver PDF
