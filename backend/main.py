@@ -6,7 +6,7 @@ import os
 from bson import ObjectId
 from fastapi import Body
 from motor.motor_asyncio import AsyncIOMotorClient  # Usamos Motor para MongoDB asincrónico
-from . import crud, utils
+import crud, utils
 from .models import (
     Book,
     Author,
