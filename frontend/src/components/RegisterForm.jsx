@@ -14,11 +14,20 @@ function RegisterForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+
+      // Verificar si la respuesta es exitosa (status 200-299)
+      if (!res.ok) {
+        // Si la respuesta no es exitosa, lanzar un error
+        throw new Error(`Error ${res.status}: ${res.statusText}`);
+      }
+
+      // Intentar parsear JSON solo si la respuesta es exitosa
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "Error registrando");
       setMsg("✅ Usuario creado con éxito");
       setForm({ username: "", email: "", password: "" });
     } catch (err) {
+      // Mostrar error si la respuesta no es JSON o si hubo un problema
+      console.error("Error en el registro:", err);
       setMsg("❌ " + err.message);
     }
   };
@@ -81,9 +90,7 @@ function RegisterForm() {
 
       {msg && (
         <div
-          className={`text-sm text-center mt-2 ${
-            msg.startsWith("✅") ? "text-green-600" : "text-red-500"
-          }`}
+          className={`text-sm text-center mt-2 ${msg.startsWith("✅") ? "text-green-600" : "text-red-500"}`}
         >
           {msg}
         </div>
