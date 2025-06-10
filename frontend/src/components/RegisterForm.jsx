@@ -4,24 +4,31 @@ function RegisterForm() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [msg, setMsg] = useState(null);
 
-  const API_BASE = import.meta.env.PUBLIC_API_URL;
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";  // Default URL si no se encuentra la variable de entorno
+
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`${API_BASE}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "Error registrando");
-      setMsg("✅ Usuario creado con éxito");
-      setForm({ username: "", email: "", password: "" });
-    } catch (err) {
-      setMsg("❌ " + err.message);
+  e.preventDefault();
+  try {
+    const res = await fetch(`${API_BASE}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText || "Error registrando");
     }
-  };
+
+    const data = await res.json();
+    setMsg("✅ Usuario creado con éxito");
+    setForm({ username: "", email: "", password: "" });
+  } catch (err) {
+    setMsg("❌ " + err.message);
+  }
+};
+
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow space-y-4">

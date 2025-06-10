@@ -5,6 +5,8 @@ from fastapi.staticfiles import StaticFiles
 import os
 from bson import ObjectId
 from fastapi import Body
+from fastapi import status
+
 
 from . import crud, utils
 from .models import (
@@ -127,7 +129,7 @@ def update_me(updated: UserUpdateModel, user=Depends(get_current_user)):
     return user
 
 
-@app.post("/register")
+@app.post("/register", status_code=status.HTTP_201_CREATED)
 def register(user: UserCreate):
     if crud.get_user_by_email(user.email):
         raise HTTPException(status_code=400, detail="Email already registered")
