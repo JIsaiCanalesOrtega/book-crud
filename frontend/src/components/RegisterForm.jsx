@@ -1,34 +1,32 @@
 import React, { useState } from "react";
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"; // Verifica que esté correctamente configurado
+
 function RegisterForm() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [msg, setMsg] = useState(null);
 
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";  // Default URL si no se encuentra la variable de entorno
-
-
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch(`${API_BASE}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(errorText || "Error registrando");
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_BASE}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Error registrando");
+      }
+
+      const data = await res.json();
+      setMsg("✅ Usuario creado con éxito");
+      setForm({ username: "", email: "", password: "" });
+    } catch (err) {
+      setMsg("❌ " + err.message);
     }
-
-    const data = await res.json();
-    setMsg("✅ Usuario creado con éxito");
-    setForm({ username: "", email: "", password: "" });
-  } catch (err) {
-    setMsg("❌ " + err.message);
-  }
-};
-
+  };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow space-y-4">
@@ -67,7 +65,7 @@ function RegisterForm() {
 
       <button
         type="submit"
-        className="bg-amber-800 text-white block w-full px-4 py-2 rounded shadow-md hover:shadow-lg transition-shadow duration-300 "
+        className="bg-amber-800 text-white block w-full px-4 py-2 rounded shadow-md hover:shadow-lg transition-shadow duration-300"
       >
         Crear cuenta
       </button>
@@ -88,9 +86,7 @@ function RegisterForm() {
 
       {msg && (
         <div
-          className={`text-sm text-center mt-2 ${
-            msg.startsWith("✅") ? "text-green-600" : "text-red-500"
-          }`}
+          className={`text-sm text-center mt-2 ${msg.startsWith("✅") ? "text-green-600" : "text-red-500"}`}
         >
           {msg}
         </div>

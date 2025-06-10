@@ -1,0 +1,14 @@
+branch-defaults:
+  main:
+    environment: null
+global:
+  application_name: book-crud
+  branch: null
+  default_platform: Python 3.13 running on 64bit Amazon Linux 2023
+  default_region: us-west-2
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: null
+  repository: null
+  workspace_type: Application
