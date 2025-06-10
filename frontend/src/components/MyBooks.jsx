@@ -84,6 +84,33 @@ const handleEdit = async (book) => {
   }
 };
 
+const handleDelete = async (bookId) => {
+  // Mostrar confirmación antes de eliminar
+  const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este libro?");
+  if (!confirmDelete) return;
+
+  try {
+    // Enviar la solicitud DELETE al backend
+    const res = await fetch(`${API_BASE}/books/${bookId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`, // Asegúrate de enviar el token de autenticación si es necesario
+      },
+    });
+
+    if (!res.ok) throw new Error("Error al eliminar el libro");
+
+    // Filtrar el libro eliminado del estado de los libros
+    setBooks((prevBooks) => prevBooks.filter((book) => book._id !== bookId));
+    alert("Libro eliminado exitosamente");
+  } catch (error) {
+    console.error("Error al eliminar libro:", error);
+    alert("No se pudo eliminar el libro");
+  }
+};
+
+
 
   if (loading) return <p className="text-center">Cargando tus libros...</p>;
   if (!token) return <p className="text-center text-red-500">Debes iniciar sesión.</p>;
